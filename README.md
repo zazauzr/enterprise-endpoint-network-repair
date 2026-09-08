@@ -92,14 +92,12 @@ Validate that the adapter has returned to operational baseline using the followi
 ## 5. Lessons Learned & Operational Post-Mortem
 
 * **Avoid destructive uninstalls during active routing deadlocks**: Cryptographic software (such as ViPNet CSP / CryptoPro) often hooks into Windows Credential Providers. Deleting the suite while keys are assigned locks local accounts out upon reboot.
-
+* **Always verify L3 before condemning physical L1/L2 adapters**: Static DNS entries combined with local client isolation often imitate physical hardware failure.
+* **Audit NDIS driver bindings early**: Third-party NDIS filter drivers can silently drop ICMP packets while DHCP  handshakes appear successful.
 ---
-
 ## License
 
 Copyright (c) 2026. All rights reserved. 
 
 This repository and its associated automation assets are proprietary intellectual property. Unauthorized copying, distribution, modification, or commercial exploitation of this material via any medium is strictly prohibited.
 
-* **Always verify L3 before condemning physical L1/L2 adapters**: Static DNS entries combined with local client isolation often imitate physical hardware failure.
-* **Audit NDIS driver bindings early**: Third-party NDIS filter drivers can silently drop ICMP packets while DHCP  handshakes appear successful.
