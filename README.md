@@ -1,5 +1,7 @@
 # Enterprise Endpoint Network Stack & NDIS Remediation Toolkit
 
+[![PowerShell](https://shields.io)](https://microsoft.com)
+[![Platform](https://shields.io)](https://microsoft.com)
 
 An automated troubleshooting, diagnostics, and recovery pipeline designed for enterprise Windows workstations experiencing complete Layer 2/Layer 3 network cut-offs caused by static configuration mismatches, NDIS filter driver deadlock, and mismanaged VPN/CSP software.
 
@@ -8,14 +10,7 @@ An automated troubleshooting, diagnostics, and recovery pipeline designed for en
 ## 1. Problem Statement & Business Impact
 
 ### Incident Summary
-A mobile enterprise workstation abruptly lost external and internal local network access while remaining associated with an authenticated corporate Wi-Fi network (`"No Internet, Secured"` status).
-<details>
-<summary> View Diagnostic Logs & Initial Failure Mode</summary>
-
-![Initial Diagnostics Check](.github/assets/01_initial_diagnostics.png)
-![NDIS Filter Detected](.github/assets/02_ndis_filter_detected.png)
-</details>
- 
+A mobile enterprise workstation abruptly lost external and internal local network access while remaining associated with an authenticated corporate Wi-Fi network (`"No Internet, Secured"` status). 
 
 ### Symptoms & Failure Mode
 * **DHCP Leases Issued**: The interface successfully negotiated an IPv4 lease (`192.0.2.45/24`) via DHCP.
@@ -26,11 +21,23 @@ A mobile enterprise workstation abruptly lost external and internal local networ
 ### Business Risk
 Inappropriate manual uninstallation of integrated cryptographic providers can cause system login locks (GINA/Credential Provider failure), loss of digital signature certificates, and extended technician downtime.
 
+<details>
+<summary> View Diagnostic Logs & Initial Failure Mode</summary>
+
+![Initial Diagnostics Check](.github/assets/01_initial_diagnostics.png)
+![NDIS Filter Detected](.github/assets/02_ndis_filter_detected.png)
+</details>
+
 ---
 
 ## 2. Architecture & Solution Design
 
-+-------------------------------------------------------------+|                     Application Layer                       ||           (Browsers, Corporate ERP, Auth Clients)           |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|              Windows TCP/IP Stack (Winsock)                 ||       [Remediation: Cache Flush, Route Normalization]       |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|             NDIS Lightweight Filter Drivers (LWF)           ||  * Problematic State: Deadlock due to removed CSP backend   ||  * Target State: Retain binding, cycle state, recover CSP   |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|               Physical / Wireless Interface                 ||   (DHCP Address Negotiation, Dynamic DNS Resolution via L2) |+-------------------------------------------------------------+
+### Component Layering
+* **Application Layer**: Host applications including web browsers, Enterprise Resource Planning (ERP) clients, and corporate authentication nodes requiring active L3/L4 network sockets.
+* **Windows TCP/IP Stack**: Core network operating system layer responsible for dynamic host routing, Winsock connections, DNS query forwarding, and local ARP lookup resolution.
+* **NDIS Lightweight Filter Drivers (LWF)**: Intermediate kernel-level network drivers that intercept raw network frames. The target state prevents traffic deadlock by managing low-level VPN/CSP inspection module states.
+* **Physical & Wireless Interfaces**: Hardware link layer responsible for dynamic Layer 2 association, automated DHCP negotiation, and physical edge media access control.
+
 ### Technology Stack
 * **Language / Orchestration**: PowerShell 5.1+ / Windows Command Processor
 * **Diagnostic Protocols**: ICMP, ARP, DNS (`Resolve-DnsName`), NetTCPIP
@@ -74,8 +81,9 @@ cd scripts/
 
 3. **Handle Encrypted Network Filters Safely**:
    * Do **not** blindly delete registry-linked CSP suites if tokens or certificates are registered.
-   * If an NDIS driver (`Iplir lightweight Filter`) intercepts traffic, disable the specific binding via adapter properties without removing the host application until keys are backed up.
+   * If an NDIS driver intercepts traffic, disable the specific binding via adapter properties without removing the host application until keys are backed up.
    * Reinstall the authorized CSP / VPN client build via official vendor deployment packages to re-register the credential providers.
+
 <details>
 <summary> View Network Isolation & Process Deadlock Artifacts</summary>
 
@@ -101,6 +109,14 @@ Validate that the adapter has returned to operational baseline using the followi
 
 ## 5. Lessons Learned & Operational Post-Mortem
 
-* **Avoid destructive uninstalls during active routing deadlocks**: Cryptographic software (such as ViPNet CSP / CryptoPro) often hooks into Windows Credential Providers. Deleting the suite while keys are assigned locks local accounts out upon reboot.
+* **Avoid destructive uninstalls during active routing deadlocks**: Cryptographic software often hooks into Windows Credential Providers. Deleting the suite while keys are assigned locks local accounts out upon reboot.
 * **Always verify L3 before condemning physical L1/L2 adapters**: Static DNS entries combined with local client isolation often imitate physical hardware failure.
-* **Audit NDIS driver bindings early**: Third-party NDIS filter drivers can silently drop ICMP packets while DHCP  handshakes appear successful.
+* **Audit NDIS driver bindings early**: Third-party NDIS filter drivers can silently drop ICMP packets while DHCP handshakes appear successful.
+
+---
+
+## License
+
+Copyright (c) 2026. All rights reserved. 
+
+This repository and its associated automation assets are proprietary intellectual property. Unauthorized copying, distribution, modification, or commercial exploitation of this material via any medium is strictly prohibited.
