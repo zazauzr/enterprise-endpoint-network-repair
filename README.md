@@ -1,8 +1,5 @@
 # Enterprise Endpoint Network Stack & NDIS Remediation Toolkit
 
-[![PowerShell](https://shields.io)](https://microsoft.com)
-[![Platform](https://shields.io)](https://microsoft.com)
-
 An automated troubleshooting, diagnostics, and recovery pipeline designed for enterprise Windows workstations experiencing complete Layer 2/Layer 3 network cut-offs caused by static configuration mismatches, NDIS filter driver deadlock, and mismanaged VPN/CSP software.
 
 ---
@@ -21,13 +18,11 @@ A mobile enterprise workstation abruptly lost external and internal local networ
 ### Business Risk
 Inappropriate manual uninstallation of integrated cryptographic providers can cause system login locks (GINA/Credential Provider failure), loss of digital signature certificates, and extended technician downtime.
 
-<details>
-<summary> View Diagnostic Logs & Initial Failure Mode</summary>
-
-![Initial Diagnostics Check](/assets/01_initial_diagnostics.png)
-![NDIS Filter Detected](/assets/02_ndis_filter_detected.png)
-
-</details>
+### Diagnostic Logs & Initial Failure Mode
+* **Initial Diagnostics Check**:
+![Initial Diagnostics Check](./assets/01_initial_diagnostics.png)
+* **NDIS Filter Detected**:
+![NDIS Filter Detected](./assets/02_ndis_filter_detected.png)
 
 ---
 
@@ -85,14 +80,13 @@ cd scripts/
    * If an NDIS driver intercepts traffic, disable the specific binding via adapter properties without removing the host application until keys are backed up.
    * Reinstall the authorized CSP / VPN client build via official vendor deployment packages to re-register the credential providers.
 
-<details>
-<summary> View Network Isolation & Process Deadlock Artifacts</summary>
-
-![Client Isolation Proof](assets/03_client_isolation.png)
-![Firewall State Audit](assets/04_firewall_audit.png)
-![Process Deadlock Error](assets/05_process_deadlock.png)
-
-</details>
+### Network Isolation & Process Deadlock Artifacts
+* **Client Isolation Proof**:
+![Client Isolation Proof](./assets/03_client_isolation.png)
+* **Firewall State Audit**:
+![Firewall State Audit](./assets/04_firewall_audit.png)
+* **Process Deadlock Error**:
+![Process Deadlock Error](./assets/05_process_deadlock.png)
 
 ---
 
