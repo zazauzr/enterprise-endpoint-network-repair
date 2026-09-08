@@ -1,9 +1,5 @@
 # Enterprise Endpoint Network Stack & NDIS Remediation Toolkit
 
-[![PowerShell](https://shields.io)](https://microsoft.com)
-[![Platform](https://shields.io)](https://microsoft.com)
-[![License: MIT](https://shields.io)](https://opensource.org)
-
 An automated troubleshooting, diagnostics, and recovery pipeline designed for enterprise Windows workstations experiencing complete Layer 2/Layer 3 network cut-offs caused by static configuration mismatches, NDIS filter driver deadlock, and mismanaged VPN/CSP software.
 
 ---
@@ -26,7 +22,7 @@ Inappropriate manual uninstallation of integrated cryptographic providers can ca
 
 ## 2. Architecture & Solution Design
 
-+-------------------------------------------------------------+|                     Application Layer                       ||           (Browsers, Corporate ERP, Auth Clients)           |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|              Windows TCP/IP Stack (Winsock)                 ||       [Remediation: Cache Flush, Route Normalization]       |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|             NDIS Lightweight Filter Drivers (LWF)           ||  * Problematic State: Deadlock due to removed CSP backend   ||  * Target State: Retain binding, cycle state, recover CSP   |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|               Physical / Wireless Interface                 ||   (DHCP Address Negotiation, Dynamic DNS Resolution via L2) |+-------------------------------------------------------------+
+                    Application Layer                       ||           (Browsers, Corporate ERP, Auth Clients)          -------+|              Windows TCP/IP Stack (Winsock)                 ||       [Remediation: Cache Flush, Route Normalization]       |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|             NDIS Lightweight Filter Drivers (LWF)           ||  * Problematic State: Deadlock due to removed CSP backend   ||  * Target State: Retain binding, cycle state, recover CSP   |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|               Physical / Wireless Interface                 ||   (DHCP Address Negotiation, Dynamic DNS Resolution via L2) |+-------------------------------------------------------------+
 ### Technology Stack
 * **Language / Orchestration**: PowerShell 5.1+ / Windows Command Processor
 * **Diagnostic Protocols**: ICMP, ARP, DNS (`Resolve-DnsName`), NetTCPIP
