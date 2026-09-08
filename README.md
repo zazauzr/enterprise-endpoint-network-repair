@@ -19,14 +19,19 @@ A mobile enterprise workstation abruptly lost external and internal local networ
 Inappropriate manual uninstallation of integrated cryptographic providers can cause system login locks (GINA/Credential Provider failure), loss of digital signature certificates, and extended technician downtime.
 
 ---
-
 ## 2. Architecture & Solution Design
 
-                    Application Layer                       ||           (Browsers, Corporate ERP, Auth Clients)          -------+|              Windows TCP/IP Stack (Winsock)                 ||       [Remediation: Cache Flush, Route Normalization]       |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|             NDIS Lightweight Filter Drivers (LWF)           ||  * Problematic State: Deadlock due to removed CSP backend   ||  * Target State: Retain binding, cycle state, recover CSP   |+-------------------------------------------------------------+|v+-------------------------------------------------------------+|               Physical / Wireless Interface                 ||   (DHCP Address Negotiation, Dynamic DNS Resolution via L2) |+-------------------------------------------------------------+
+### Component Layering
+* **Application Layer**: Host applications including web browsers, Enterprise Resource Planning (ERP) clients, and corporate authentication nodes requiring active L3/L4 network sockets.
+* **Windows TCP/IP Stack**: Core network operating system layer responsible for dynamic host routing, Winsock connections, DNS query forwarding, and local ARP lookup resolution.
+* **NDIS Lightweight Filter Drivers (LWF)**: Intermediate kernel-level network drivers that intercept raw network frames. The target state prevents traffic deadlock by managing low-level VPN/CSP inspection module states.
+* **Physical & Wireless Interfaces**: Hardware link layer responsible for dynamic Layer 2 association, automated DHCP negotiation, and physical edge media access control.
+
 ### Technology Stack
 * **Language / Orchestration**: PowerShell 5.1+ / Windows Command Processor
 * **Diagnostic Protocols**: ICMP, ARP, DNS (`Resolve-DnsName`), NetTCPIP
 * **Host Subsystems**: NDIS (Network Driver Interface Specification), Windows Filtering Platform (WFP), Microsoft CryptoAPI / CSP Architecture
+
 
 ---
 
@@ -87,5 +92,14 @@ Validate that the adapter has returned to operational baseline using the followi
 ## 5. Lessons Learned & Operational Post-Mortem
 
 * **Avoid destructive uninstalls during active routing deadlocks**: Cryptographic software (such as ViPNet CSP / CryptoPro) often hooks into Windows Credential Providers. Deleting the suite while keys are assigned locks local accounts out upon reboot.
+
+---
+
+## License
+
+Copyright (c) 2026. All rights reserved. 
+
+This repository and its associated automation assets are proprietary intellectual property. Unauthorized copying, distribution, modification, or commercial exploitation of this material via any medium is strictly prohibited.
+
 * **Always verify L3 before condemning physical L1/L2 adapters**: Static DNS entries combined with local client isolation often imitate physical hardware failure.
 * **Audit NDIS driver bindings early**: Third-party NDIS filter drivers can silently drop ICMP packets while DHCP  handshakes appear successful.
