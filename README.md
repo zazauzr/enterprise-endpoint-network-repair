@@ -26,6 +26,7 @@ Inappropriate manual uninstallation of integrated cryptographic providers can ca
 
 ![Initial Diagnostics Check](.github/assets/01_initial_diagnostics.png)
 ![NDIS Filter Detected](.github/assets/02_ndis_filter_detected.png)
+
 </details>
 
 ---
@@ -90,6 +91,7 @@ cd scripts/
 ![Client Isolation Proof](.github/assets/03_client_isolation.png)
 ![Firewall State Audit](.github/assets/04_firewall_audit.png)
 ![Process Deadlock Error](.github/assets/05_process_deadlock.png)
+
 </details>
 
 ---
