@@ -1,8 +1,5 @@
 # Enterprise Endpoint Network Stack & NDIS Remediation Toolkit
 
-[![PowerShell](https://shields.io)](https://microsoft.com)
-[![Platform](https://shields.io)](https://microsoft.com)
-[![License: MIT](https://shields.io)](https://opensource.org)
 
 An automated troubleshooting, diagnostics, and recovery pipeline designed for enterprise Windows workstations experiencing complete Layer 2/Layer 3 network cut-offs caused by static configuration mismatches, NDIS filter driver deadlock, and mismanaged VPN/CSP software.
 
@@ -11,7 +8,14 @@ An automated troubleshooting, diagnostics, and recovery pipeline designed for en
 ## 1. Problem Statement & Business Impact
 
 ### Incident Summary
-A mobile enterprise workstation abruptly lost external and internal local network access while remaining associated with an authenticated corporate Wi-Fi network (`"No Internet, Secured"` status). 
+A mobile enterprise workstation abruptly lost external and internal local network access while remaining associated with an authenticated corporate Wi-Fi network (`"No Internet, Secured"` status).
+<details>
+<summary> View Diagnostic Logs & Initial Failure Mode</summary>
+
+![Initial Diagnostics Check](.github/assets/01_initial_diagnostics.png)
+![NDIS Filter Detected](.github/assets/02_ndis_filter_detected.png)
+</details>
+ 
 
 ### Symptoms & Failure Mode
 * **DHCP Leases Issued**: The interface successfully negotiated an IPv4 lease (`192.0.2.45/24`) via DHCP.
@@ -72,6 +76,13 @@ cd scripts/
    * Do **not** blindly delete registry-linked CSP suites if tokens or certificates are registered.
    * If an NDIS driver (`Iplir lightweight Filter`) intercepts traffic, disable the specific binding via adapter properties without removing the host application until keys are backed up.
    * Reinstall the authorized CSP / VPN client build via official vendor deployment packages to re-register the credential providers.
+<details>
+<summary> View Network Isolation & Process Deadlock Artifacts</summary>
+
+![Client Isolation Proof](.github/assets/03_client_isolation.png)
+![Firewall State Audit](.github/assets/04_firewall_audit.png)
+![Process Deadlock Error](.github/assets/05_process_deadlock.png)
+</details>
 
 ---
 
