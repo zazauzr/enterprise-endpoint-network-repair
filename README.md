@@ -111,8 +111,8 @@ Validate that the adapter has returned to operational baseline using the followi
 
 ---
 
-## License
+## Copyright and License
 
-Copyright (c) 2026. All rights reserved. 
+Copyright (c) 2026 zazauzr. All rights reserved.
 
-This repository and its associated automation assets are proprietary intellectual property. Unauthorized copying, distribution, modification, or commercial exploitation of this material via any medium is strictly prohibited.
+This repository and all its contents (including documentation, scripts, and configuration files) are proprietary. Unauthorized copying, modification, distribution, or commercial use of any materials from this repository, via any medium, is strictly prohibited without the express prior written permission of the copyright holder.
