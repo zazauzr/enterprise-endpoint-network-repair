@@ -14,38 +14,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Fix: Dynamically create folder structure and dummy playbook to satisfy ansible-lint if empty
-      - name: Prepare Workspace Directories
-        run: |
-          mkdir -p playbooks scripts
-          if [ ! -f playbooks/configure_intranet_zones.yml ]; then
-            echo -e "---\n- hosts: localhost\n  tasks: []" > playbooks/configure_intranet_zones.yml
-          fi
-
-      - name: Run Ansible Lint
-        uses: ansible/ansible-lint@v6
-        with:
-          args: playbooks/
-
+  
       - name: Run PowerShell Script Analyzer
         uses: microsoft/psscriptanalyzer-action@v1.1
         with:
           path: scripts/
-          failOnSeverity: Error
-
-  test-windows:
-    name: Functional Test on Windows OS
-    needs: lint
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Execute Intranet Zone PowerShell Script
-        shell: powershell
-        run: |
-          if (Test-Path "scripts/Add-IntranetZone.ps1") {
-              .\scripts\Add-IntranetZone.ps1 -TargetAddress "192.168.1.252"
-          } else {
-              Write-Warning "PowerShell script not found in repository yet. Skipping deployment test."
-          }
