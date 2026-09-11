@@ -1,7 +1,6 @@
 # Enterprise Endpoint Network Stack & NDIS Remediation Toolkit
 
 An automated troubleshooting, diagnostics, and recovery pipeline designed for enterprise Windows workstations experiencing complete Layer 2/Layer 3 network cut-offs caused by static configuration mismatches, NDIS filter driver deadlock, and mismanaged VPN/CSP software.
-![Lint and Test Automation](https://github.com)
 
 ---
 
