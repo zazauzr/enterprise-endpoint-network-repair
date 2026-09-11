@@ -1,0 +1,54 @@
+name: Lint and Test Automation
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Ansible Lint
+        uses: ansible/ansible-lint@v6
+        with:
+          args: playbooks/
+
+      - name: Run PowerShell Script Analyzer
+        uses: microsoft/psscriptanalyzer-action@v1.1
+        with:
+          path: scripts/
+          failOnSeverity: Error
+
+  test-windows:
+    name: Functional Test on Windows OS
+    needs: lint
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Execute Intranet Zone PowerShell Script
+        shell: powershell
+        run: |
+          .\scripts\Add-IntranetZone.ps1 -TargetAddress "192.168.1.252"
+
+      - name: Verify Registry State (Healthcheck)
+        shell: powershell
+        run: |
+          $RegPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\ZoneMap\Domains\192.168.1.252"
+          if (-not (Test-Path $RegPath)) {
+              Write-Error "Verification Failed: Registry key was not created."
+              exit 1
+          }
+          $Value = (Get-ItemProperty -Path $RegPath -Name "file").file
+          if ($Value -ne 1) {
+              Write-Error "Verification Failed: Expected zone value '1', but got '$Value'."
+              exit 1
+          }
+          Write-Host "Success: Windows Security configuration verified!" -ForegroundColor Green
